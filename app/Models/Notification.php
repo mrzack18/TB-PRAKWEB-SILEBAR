@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Events\NotificationCreated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,13 +20,6 @@ class Notification extends Model
     protected $casts = [
         'is_read' => 'boolean',
     ];
-
-    protected static function booted()
-    {
-        static::created(function ($notification) {
-            broadcast(new NotificationCreated($notification));
-        });
-    }
 
     // Relationships
     public function user()

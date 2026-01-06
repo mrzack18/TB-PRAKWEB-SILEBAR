@@ -26,7 +26,7 @@ SILEBAR adalah sistem lelang online yang dirancang untuk memfasilitasi proses le
 - **Sistem Lelang Real-time**: Dukungan untuk penawaran langsung
 - **Manajemen Barang Lelang**: Upload foto, deskripsi, kategori
 - **Verifikasi Admin**: Proses verifikasi barang dan pembayaran
-- **Notifikasi Real-time**: Menggunakan Pusher untuk pembaruan instan
+- **Notifikasi Log-based**: Sistem notifikasi berbasis log (tidak real-time)
 - **Laporan Transaksi**: Laporan harian, bulanan, tahunan
 - **Sistem Pembayaran**: Integrasi dengan gateway pembayaran
 - **Manajemen Pengiriman**: Pelacakan status pengiriman barang
@@ -39,7 +39,6 @@ SILEBAR adalah sistem lelang online yang dirancang untuk memfasilitasi proses le
 - **Backend**: Laravel 12 (PHP 8.3+)
 - **Database**: MySQL 8.0+
 - **Frontend**: Tailwind CSS 4.x, Alpine.js
-- **Real-time**: Pusher/Reverb
 - **Queue**: Redis
 - **Build Tools**: Node.js, NPM/Yarn
 
@@ -92,7 +91,12 @@ Sebelum memulai, pastikan sistem Anda telah terinstall:
    php artisan migrate --seed
    ```
 
-8. Jalankan aplikasi:
+8. Buat symlink untuk akses file storage:
+   ```bash
+   php artisan storage:link
+   ```
+
+9. Jalankan aplikasi:
    ```bash
    php artisan serve
    ```
@@ -111,17 +115,22 @@ DB_USERNAME=username
 DB_PASSWORD=password
 ```
 
-### Pusher/Reverb (Real-time)
-Untuk fitur real-time, konfigurasi Pusher/Reverb di file `.env`:
+### Storage Link
+Untuk mengakses file yang diupload (gambar lelang, bukti pembayaran, dll), buat symlink dari `public/storage` ke `storage/app/public`:
 
-```env
-PUSHER_APP_ID=your_app_id
-PUSHER_APP_KEY=your_app_key
-PUSHER_APP_SECRET=your_app_secret
-PUSHER_HOST=your_host
-PUSHER_PORT=443
-PUSHER_SCHEME=https
-PUSHER_APP_CLUSTER=your_cluster
+```bash
+php artisan storage:link
+```
+
+Jika symlink sudah ada dan bermasalah, hapus dulu lalu buat ulang:
+```bash
+# Di Windows
+rmdir /s /q public\storage
+php artisan storage:link
+
+# Di Linux/Mac
+rm -rf public/storage
+php artisan storage:link
 ```
 
 ### Email
@@ -239,6 +248,11 @@ Aplikasi ini menggunakan 7 tabel utama:
   - Semua status (aktif dan selesai)
   - Hanya lelang aktif
   - Hanya lelang selesai
+
+### 8. Sistem Notifikasi
+- Sistem notifikasi sekarang berbasis log (tidak real-time)
+- Pengguna dapat melihat notifikasi di halaman notifikasi
+- Tidak ada notifikasi pop-up atau notifikasi real-time
 
 ## Pengembangan
 

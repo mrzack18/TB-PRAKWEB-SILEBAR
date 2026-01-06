@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NotificationCreated implements ShouldBroadcast
+class NotificationCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -23,35 +23,5 @@ class NotificationCreated implements ShouldBroadcast
     public function __construct(Notification $notification)
     {
         $this->notification = $notification;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('user.' . $this->notification->user_id),
-        ];
-    }
-
-    /**
-     * Get the data to broadcast.
-     *
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'id' => $this->notification->id,
-            'user_id' => $this->notification->user_id,
-            'title' => $this->notification->title,
-            'message' => $this->notification->message,
-            'type' => $this->notification->type,
-            'is_read' => $this->notification->is_read,
-            'created_at' => $this->notification->created_at->toISOString(),
-        ];
     }
 }

@@ -1,0 +1,10 @@
+-- Migration for auction_images table
+CREATE TABLE auction_images (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    auction_item_id BIGINT UNSIGNED NOT NULL,
+    image_path VARCHAR(255) NOT NULL,
+    is_primary BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (auction_item_id) REFERENCES auction_items(id) ON DELETE CASCADE
+);

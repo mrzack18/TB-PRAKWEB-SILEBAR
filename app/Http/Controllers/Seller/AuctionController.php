@@ -11,6 +11,9 @@ class AuctionController extends Controller
 {
     public function index()
     {
+        // Check for and process expired auctions before displaying the page
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         $auctions = AuctionItem::where('seller_id', auth()->id())
             ->with('category')
             ->orderBy('created_at', 'desc')

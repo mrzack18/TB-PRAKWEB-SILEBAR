@@ -10,6 +10,9 @@ class AuctionController extends Controller
 {
     public function index(Request $request)
     {
+        // Check for and process expired auctions before displaying the page
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         $query = AuctionItem::with(['seller', 'images']);
 
         // Filter by status if provided
@@ -71,6 +74,9 @@ class AuctionController extends Controller
 
     public function show(AuctionItem $auction)
     {
+        // Check for and process expired auctions before showing the auction page
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         $auction->load(['seller', 'images', 'bids.user']);
         $bidHistory = $auction->bidsOrdered()->limit(10)->get();
 

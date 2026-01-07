@@ -46,7 +46,7 @@ Route::prefix('seller')->name('seller.')->middleware('role:seller')->group(funct
     Route::resource('auctions', \App\Http\Controllers\Seller\AuctionController::class);
     Route::patch('/auctions/{auction}/end-early', [\App\Http\Controllers\Seller\AuctionController::class, 'endEarly'])->name('auctions.endEarly');
     Route::resource('transactions', \App\Http\Controllers\Seller\TransactionController::class);
-    Route::patch('/transactions/{transaction}/shipping-status', [\App\Http\Controllers\Seller\TransactionController::class, 'updateShippingStatus'])->name('seller.transactions.shipping.update');
+    Route::patch('/transactions/{transaction}/shipping-status', [\App\Http\Controllers\Seller\TransactionController::class, 'updateShippingStatus'])->name('transactions.shipping.update');
     Route::get('/shipping', [\App\Http\Controllers\Seller\ShippingController::class, 'index'])->name('shipping.index');
     Route::patch('/shipping/{transaction}/update', [\App\Http\Controllers\Seller\ShippingController::class, 'update'])->name('shipping.update');
 });

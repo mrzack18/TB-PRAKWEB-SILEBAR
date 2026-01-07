@@ -15,9 +15,6 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
-        // Run the CheckExpiredAuctions job every minute
-        $schedule->job(CheckExpiredAuctions::class)->everyMinute();
-
         // Send reminders 5 minutes before auction ends
         $schedule->job(SendAuctionReminder::class)->everyFiveMinutes();
     }

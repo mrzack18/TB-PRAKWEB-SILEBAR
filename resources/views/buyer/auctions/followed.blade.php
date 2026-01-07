@@ -32,10 +32,10 @@
                     @php
                         $highestBid = $auction->bids()->orderBy('bid_amount', 'desc')->first();
                         $isWinner = $highestBid && $highestBid->user_id === auth()->id();
-                        $hasTransaction = $auction->transaction;
+                        $transaction = $auction->transaction;
                     @endphp
 
-                    @if($auction->status === 'completed' && $isWinner && !$hasTransaction)
+                    @if($auction->status === 'completed' && $isWinner && (!$transaction || $transaction->payment_status === 'pending'))
                         <form action="{{ route('payments.create', $auction) }}" method="POST" class="mb-2">
                             @csrf
                             <button type="submit" class="block w-full bg-green-600 text-white text-center py-2 px-4 rounded-md hover:bg-green-700 transition-colors">
@@ -45,8 +45,8 @@
                         <a href="{{ route('auctions.show', $auction) }}" class="block w-full bg-primary text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
                             Lihat Detail
                         </a>
-                    @elseif($auction->status === 'completed' && $isWinner && $hasTransaction)
-                        <a href="{{ route('payments.show', $hasTransaction) }}" class="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors mb-2">
+                    @elseif($auction->status === 'completed' && $isWinner && $transaction && $transaction->payment_status !== 'pending')
+                        <a href="{{ route('payments.show', $transaction) }}" class="block w-full bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors mb-2">
                             Lihat Pembayaran
                         </a>
                         <a href="{{ route('auctions.show', $auction) }}" class="block w-full bg-primary text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">

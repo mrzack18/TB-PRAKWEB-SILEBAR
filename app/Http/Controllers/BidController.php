@@ -13,6 +13,9 @@ class BidController extends Controller
 {
     public function store(Request $request, AuctionItem $auction)
     {
+        // Check for and process expired auctions before placing a bid
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         // Check if user is a buyer
         if (auth()->user()->role !== 'buyer') {
             return response()->json(['error' => 'Hanya pembeli yang dapat melakukan penawaran'], 403);
@@ -26,7 +29,7 @@ class BidController extends Controller
             ]
         ]);
 
-        // Check if auction is still active
+        // Check if auction is still active (after processing expired auctions)
         if ($auction->isExpired) {
             return response()->json(['error' => 'Lelang sudah berakhir'], 400);
         }
@@ -79,12 +82,28 @@ class BidController extends Controller
             ->pluck('user_id');
 
         foreach ($otherBidders as $userId) {
+            // Get the user's highest bid for this auction
+            $userHighestBid = $auction->bids()
+                ->where('user_id', $userId)
+                ->orderBy('bid_amount', 'desc')
+                ->first();
+
+            $userBidAmount = $userHighestBid ? $userHighestBid->bid_amount : 0;
+
             \App\Models\Notification::create([
                 'user_id' => $userId,
                 'title' => 'Tawaran Anda Terlampaui',
-                'message' => "Penawaran Anda pada '{$auction->title}' telah dilampaui oleh user lain.",
+                'message' => "Penawaran Anda sebesar Rp " . number_format($userBidAmount) . " pada barang '{$auction->title}' telah dilampaui oleh penawar lain. Penawaran tertinggi saat ini adalah Rp " . number_format($newBid->bid_amount) . ".",
                 'type' => 'bid'
             ]);
         }
+
+        // Notify the seller about the new bid
+        \App\Models\Notification::create([
+            'user_id' => $auction->seller_id,
+            'title' => 'Penawaran Baru untuk Barang Anda',
+            'message' => "Ada penawaran baru sebesar Rp " . number_format($newBid->bid_amount) . " untuk barang '{$auction->title}' Anda. Penawar: {$newBid->user->name}. Waktu lelang tersisa: {$auction->getTimeRemainingAttribute()}.",
+            'type' => 'bid'
+        ]);
     }
 }

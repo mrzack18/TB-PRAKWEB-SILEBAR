@@ -26,13 +26,14 @@ SILEBAR adalah sistem lelang online yang dirancang untuk memfasilitasi proses le
 - **Sistem Lelang Real-time**: Dukungan untuk penawaran langsung
 - **Manajemen Barang Lelang**: Upload foto, deskripsi, kategori
 - **Verifikasi Admin**: Proses verifikasi barang dan pembayaran
-- **Notifikasi Log-based**: Sistem notifikasi berbasis log (tidak real-time)
+- **Notifikasi Log-based**: Sistem notifikasi berbasis log (tidak real-time) untuk semua role
 - **Laporan Transaksi**: Laporan harian, bulanan, tahunan
 - **Sistem Pembayaran**: Integrasi dengan gateway pembayaran
 - **Manajemen Pengiriman**: Pelacakan status pengiriman barang
 - **Filter Status Lelang**: Filter untuk menampilkan lelang aktif dan selesai
 - **Otomatisasi Status Lelang**: Lelang otomatis berubah menjadi 'completed' saat waktu habis
 - **Sistem Pembayaran Lengkap**: Proses pembayaran dan verifikasi pembayaran
+- **Notifikasi Lengkap**: Notifikasi komprehensif untuk admin, penjual, dan pembeli
 
 ## Teknologi yang Digunakan
 
@@ -253,6 +254,26 @@ Aplikasi ini menggunakan 7 tabel utama:
 - Sistem notifikasi sekarang berbasis log (tidak real-time)
 - Pengguna dapat melihat notifikasi di halaman notifikasi
 - Tidak ada notifikasi pop-up atau notifikasi real-time
+- **Notifikasi Admin**:
+  - Pemberitahuan tentang barang baru menunggu verifikasi
+  - Pemberitahuan tentang pembayaran baru menunggu verifikasi
+  - Pembaruan sistem penting
+- **Notifikasi Penjual**:
+  - Pemberitahuan tentang status verifikasi barang
+  - Pemberitahuan tentang lelang yang segera berakhir
+  - Pemberitahuan tentang barang terjual
+  - Pemberitahuan tentang pembayaran yang diterima
+  - Pemberitahuan tentang permintaan pengiriman
+  - Pemberitahuan tentang permintaan ulasan
+  - Pemberitahuan tentang pembatalan lelang
+- **Notifikasi Pembeli**:
+  - Pemberitahuan tentang penawaran yang terlampaui
+  - Pemberitahuan tentang kemenangan lelang
+  - Pemberitahuan tentang status pembayaran
+  - Pemberitahuan tentang status pengiriman
+  - Pemberitahuan tentang keterlambatan pengiriman
+  - Pemberitahuan tentang permintaan ulasan
+  - Pemberitahuan tentang pembatalan lelang
 
 ## Pengembangan
 

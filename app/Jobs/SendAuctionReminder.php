@@ -27,15 +27,23 @@ class SendAuctionReminder implements ShouldQueue
         foreach ($upcomingExpirations as $auction) {
             // Send notification to all bidders
             $bidders = $auction->bids()->pluck('user_id')->unique();
-            
+
             foreach ($bidders as $userId) {
                 Notification::create([
                     'user_id' => $userId,
                     'title' => 'Lelang Segera Berakhir',
-                    'message' => "Lelang '{$auction->title}' akan segera berakhir dalam 5 menit. Ayo tingkatkan penawaran Anda!",
-                    'type' => 'bid'
+                    'message' => "Lelang '{$auction->title}' akan segera berakhir dalam 5 menit. Penawaran tertinggi saat ini: Rp " . number_format($auction->getCurrentHighestBid()) . ". Ayo tingkatkan penawaran Anda untuk memenangkan lelang!",
+                    'type' => 'auction_end'
                 ]);
             }
+
+            // Also notify the seller
+            Notification::create([
+                'user_id' => $auction->seller_id,
+                'title' => 'Lelang Segera Berakhir',
+                'message' => "Lelang barang '{$auction->title}' Anda akan segera berakhir dalam 5 menit. Penawaran tertinggi saat ini: Rp " . number_format($auction->getCurrentHighestBid()) . ". Total penawar: {$auction->bids->count()} orang.",
+                'type' => 'auction_end'
+            ]);
         }
     }
 }

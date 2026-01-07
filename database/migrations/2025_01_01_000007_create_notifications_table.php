@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('message');
-            $table->enum('type', ['bid', 'winner', 'payment', 'shipping', 'verification']);
+            $table->enum('type', ['bid', 'winner', 'payment', 'shipping', 'verification', 'system', 'auction_end', 'payment_reminder', 'shipping_delay', 'feedback', 'auction_cancelled']);
             $table->boolean('is_read')->default(false);
             $table->timestamps();
         });

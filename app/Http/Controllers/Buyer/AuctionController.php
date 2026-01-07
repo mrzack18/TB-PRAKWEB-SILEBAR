@@ -11,6 +11,9 @@ class AuctionController extends Controller
 {
     public function followed()
     {
+        // Check for and process expired auctions before displaying the page
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         $followedAuctions = AuctionItem::whereIn('id', function($query) {
             $query->select('auction_item_id')
                   ->from('bids')

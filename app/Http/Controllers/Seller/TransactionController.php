@@ -39,22 +39,38 @@ class TransactionController extends Controller
             Notification::create([
                 'user_id' => $transaction->winner_id,
                 'title' => 'Barang Dikirim',
-                'message' => "Barang '{$transaction->auctionItem->title}' telah dikirim. Silakan pantau pengiriman.",
+                'message' => "Barang '{$transaction->auctionItem->title}' telah dikirim oleh {$transaction->seller->name}. Silakan pantau pengiriman dan siapkan diri untuk menerima barang.",
                 'type' => 'shipping'
             ]);
         } elseif ($request->shipping_status === 'delivered') {
             Notification::create([
                 'user_id' => $transaction->winner_id,
                 'title' => 'Barang Sampai',
-                'message' => "Barang '{$transaction->auctionItem->title}' telah sampai. Silakan periksa dan konfirmasi penerimaan.",
+                'message' => "Barang '{$transaction->auctionItem->title}' telah sampai di tempat Anda. Silakan periksa kondisi barang dan konfirmasi penerimaan dalam waktu 2x24 jam.",
                 'type' => 'shipping'
             ]);
         } elseif ($request->shipping_status === 'completed') {
             Notification::create([
                 'user_id' => $transaction->winner_id,
                 'title' => 'Transaksi Selesai',
-                'message' => "Transaksi untuk barang '{$transaction->auctionItem->title}' telah selesai.",
+                'message' => "Transaksi untuk barang '{$transaction->auctionItem->title}' telah selesai. Terima kasih telah menggunakan layanan SILEBAR. Jangan lupa memberikan ulasan untuk penjual.",
                 'type' => 'shipping'
+            ]);
+
+            // Notify seller to request feedback
+            Notification::create([
+                'user_id' => $transaction->seller_id,
+                'title' => 'Berikan Ulasan',
+                'message' => "Transaksi untuk barang '{$transaction->auctionItem->title}' telah selesai. Silakan berikan ulasan untuk pembeli {$transaction->winner->name} untuk membantu pengalaman pengguna lain.",
+                'type' => 'feedback'
+            ]);
+
+            // Notify buyer to request feedback
+            Notification::create([
+                'user_id' => $transaction->winner_id,
+                'title' => 'Berikan Ulasan',
+                'message' => "Transaksi untuk barang '{$transaction->auctionItem->title}' telah selesai. Silakan berikan ulasan untuk penjual {$transaction->seller->name} untuk membantu pengalaman pengguna lain.",
+                'type' => 'feedback'
             ]);
         }
 

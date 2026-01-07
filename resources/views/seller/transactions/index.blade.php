@@ -110,6 +110,28 @@
                                     {{ ucfirst(str_replace('_', ' ', $transaction->shipping_status)) }}
                                 </span>
                             @endif
+
+                            @if($transaction->shipping_status !== 'completed' && $transaction->payment_status === 'verified')
+                                <div class="mt-2">
+                                    <form method="POST" action="{{ route('seller.transactions.shipping.update', $transaction) }}" class="inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <select name="shipping_status" class="text-xs rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                                            @if($transaction->shipping_status === 'waiting_shipment')
+                                                <option value="processing" {{ $transaction->shipping_status === 'processing' ? 'selected' : '' }}>Siap Dikirim</option>
+                                                <option value="shipped" {{ $transaction->shipping_status === 'shipped' ? 'selected' : '' }}>Dikirim</option>
+                                            @elseif($transaction->shipping_status === 'processing')
+                                                <option value="shipped" {{ $transaction->shipping_status === 'shipped' ? 'selected' : '' }}>Dikirim</option>
+                                            @elseif($transaction->shipping_status === 'shipped')
+                                                <option value="delivered" {{ $transaction->shipping_status === 'delivered' ? 'selected' : '' }}>Sampai Tujuan</option>
+                                            @elseif($transaction->shipping_status === 'delivered')
+                                                <option value="completed" {{ $transaction->shipping_status === 'completed' ? 'selected' : '' }}>Selesai</option>
+                                            @endif
+                                        </select>
+                                        <button type="submit" class="ml-1 text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Update</button>
+                                    </form>
+                                </div>
+                            @endif
                         </td>
                     </tr>
                     @endforeach

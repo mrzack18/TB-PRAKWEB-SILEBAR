@@ -29,8 +29,8 @@ class AuctionVerificationController extends Controller
         // Notify seller
         Notification::create([
             'user_id' => $auction->seller_id,
-            'title' => 'Barang Disetujui',
-            'message' => "Barang '{$auction->title}' telah disetujui dan aktif dilelang.",
+            'title' => 'Barang Disetujui - Lelang Dimulai',
+            'message' => "Barang '{$auction->title}' telah disetujui dan aktif dilelang. Lelang akan berlangsung hingga {$auction->end_time->format('d M Y H:i')}. Harap pantau lelang secara berkala untuk informasi penawaran terbaru.",
             'type' => 'verification'
         ]);
 
@@ -52,7 +52,7 @@ class AuctionVerificationController extends Controller
         Notification::create([
             'user_id' => $auction->seller_id,
             'title' => 'Barang Ditolak',
-            'message' => "Barang '{$auction->title}' ditolak. Alasan: {$request->verification_note}",
+            'message' => "Barang '{$auction->title}' ditolak dengan alasan: {$request->verification_note}. Silakan perbaiki sesuai saran admin dan ajukan kembali untuk diverifikasi.",
             'type' => 'verification'
         ]);
 

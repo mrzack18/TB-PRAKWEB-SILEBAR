@@ -12,6 +12,9 @@ class PaymentController extends Controller
 {
     public function index()
     {
+        // Check for and process expired auctions before displaying the page
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         $transactions = auth()->user()->transactions()
             ->with(['auctionItem', 'auctionItem.images'])
             ->orderBy('created_at', 'desc')
@@ -22,6 +25,9 @@ class PaymentController extends Controller
 
     public function show(Transaction $transaction)
     {
+        // Check for and process expired auctions before displaying the page
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         // Ensure the user can only view their own transactions
         if ($transaction->winner_id !== auth()->id() && $transaction->seller_id !== auth()->id()) {
             abort(403);
@@ -32,6 +38,9 @@ class PaymentController extends Controller
 
     public function create(Request $request, AuctionItem $auction)
     {
+        // Check for and process expired auctions before creating payment
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         // Check if auction is completed and has a winner
         if ($auction->status !== 'completed') {
             return redirect()->back()->with('error', 'Lelang belum selesai');
@@ -75,6 +84,9 @@ class PaymentController extends Controller
 
     public function processPayment(Request $request, Transaction $transaction)
     {
+        // Check for and process expired auctions before processing payment
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         // Validate the request
         $request->validate([
             'payment_method' => 'required|in:bank_transfer,credit_card,e_wallet',
@@ -93,6 +105,17 @@ class PaymentController extends Controller
             $transaction->update([
                 'payment_proof' => $path,
             ]);
+
+            // Notify admins about new payment pending verification
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                \App\Models\Notification::create([
+                    'user_id' => $admin->id,
+                    'title' => 'Pembayaran Baru Menunggu Verifikasi',
+                    'message' => "Pembayaran untuk barang '{$transaction->auctionItem->title}' dari pembeli {$transaction->winner->name} menunggu verifikasi.",
+                    'type' => 'payment'
+                ]);
+            }
         }
 
         return redirect()->route('payments.show', $transaction)
@@ -101,6 +124,9 @@ class PaymentController extends Controller
 
     public function verifyPayment(Request $request, Transaction $transaction)
     {
+        // Check for and process expired auctions before verifying payment
+        AuctionItem::checkAndProcessExpiredAuctions();
+
         // Only admin or the seller of the transaction can verify payments
         if (auth()->user()->role !== 'admin' && $transaction->seller_id !== auth()->id()) {
             abort(403);
